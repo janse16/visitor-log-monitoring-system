@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visitor Log Monitoring System - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-page">
+  <div class="login-outer-bg"></div>
+  <div class="login-center-wrap">
+    <form id="loginForm" class="login-box" autocomplete="on">
+      <h1 class="login-title">Visitor Log Monitoring System</h1>
+      <div class="login-subtitle">Amaia Skies Cubao Condominium</div>
+      <div class="login-fields">
+        <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+      <div id="errorMsg" class="login-error"></div>
+      <a href="#" id="showReset" class="login-forgot">Forgot Password?</a>
+    </form>
+    <form id="resetSection" class="login-box" style="display:none;">
+      <h2 class="login-title">Reset Password</h2>
+      <input type="text" id="resetUsername" placeholder="Enter Username" required>
+      <input type="password" id="resetNewPass" placeholder="Enter New Password" required>
+      <button type="submit" class="login-btn">Reset Password</button>
+      <div id="resetMsg" class="login-error"></div>
+      <a href="#" id="backToLogin" class="login-forgot">Back to Login</a>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

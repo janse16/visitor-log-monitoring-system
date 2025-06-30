@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visitor Log Monitoring System | Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">Menu</div>
+      <ul class="sidebar-menu">
+        <li onclick="showTab('dashboard')" class="active"><span class="sidebar-icon">🏠</span> Dashboard</li>
+        <li onclick="showTab('register')"><span class="sidebar-icon">➕</span> Register Visitor</li>
+        <li onclick="showTab('current')"><span class="sidebar-icon">👁️</span> Current Visitors</li>
+        <li onclick="showTab('history')"><span class="sidebar-icon">📜</span> Visitor History</li>
+        <li onclick="showTab('report')"><span class="sidebar-icon">📊</span> Reports</li>
+        <li onclick="showTab('users')"><span class="sidebar-icon">👤</span> User Management</li>
+        <li onclick="showTab('settings')"><span class="sidebar-icon">⚙️</span> Settings</li>
+        <li onclick="showTab('audit')"><span class="sidebar-icon">📝</span> Audit Trail</li>
+      </ul>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Overview -->
+      <section id="dashboardTab" class="tab">
+        <h2>Dashboard Overview</h2>
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <div class="icon">👁️</div>
+            <div>
+              <div class="count" id="countActiveVisitors">0</div>
+              <div class="label">Active Visitors</div>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="icon">📅</div>
+            <div>
+              <div class="count" id="countTodayVisitors">0</div>
+              <div class="label">Today's Visitors</div>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="icon">📆</div>
+            <div>
+              <div class="count" id="countWeekVisitors">0</div>
+              <div class="label">This Week</div>
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="icon">🗓️</div>
+            <div>
+              <div class="count" id="countMonthVisitors">0</div>
+              <div class="label">This Month</div>
+            </div>
+          </div>
+        </div>
+        <h3>Currently Active Visitors</h3>
+        <table id="currentVisitorsTable"></table>
+      </section>
+
+      <!-- Register Visitor Tab -->
+      <section id="registerTab" class="tab" style="display:none;">
+        <h2>Register Visitor (Check-In)</h2>
+        <button type="button" onclick="openQRScanner()" style="margin-bottom:12px;">Scan QR for Returning Visitor</button>
+        <form id="registerForm">
+          <input type="text" placeholder="Full Name" id="fullName" required>
+          <input type="text" placeholder="Contact Number" id="contact" required>
+          <input type="text" placeholder="Valid ID Type/Number" id="idNum" required>
+          <input type="text" placeholder="Unit to Visit" id="unit" required>
+          <input type="text" placeholder="Purpose of Visit" id="purpose" required>
+          <button type="submit">Check In</button>
+        </form>
+        <h3>Check-Out Visitor</h3>
+        <form id="checkoutForm">
+          <input type="text" placeholder="Enter Visitor's Name or ID" id="checkoutInput" required>
+          <button type="submit">Check Out</button>
+        </form>
+      </section>
+
+      <!-- Current Visitors Tab -->
+      <section id="currentTab" class="tab" style="display:none;">
+        <h2>Current (Checked-in) Visitors</h2>
+        <table id="currentVisitorsTable2"></table>
+      </section>
+
+      <!-- Visitor History Tab -->
+      <section id="historyTab" class="tab" style="display:none;">
+        <h2>Visitor History</h2>
+        <form id="searchForm">
+          <input type="text" id="searchName" placeholder="Search by name...">
+          <input type="date" id="searchDate">
+          <button type="submit">Search</button>
+        </form>
+        <table id="historyTable"></table>
+      </section>
+
+      <!-- Reports Tab -->
+      <section id="reportTab" class="tab" style="display:none;">
+        <h2>Reports</h2>
+        <button onclick="generateReport('daily')">Daily</button>
+        <button onclick="generateReport('weekly')">Weekly</button>
+        <button onclick="generateReport('monthly')">Monthly</button>
+        <button onclick="printReport()">Print</button>
+        <button onclick="downloadReportCSV()">Download CSV</button>
+        <div id="reportResult"></div>
+        <table id="reportTable"></table>
+      </section>
+
+      <!-- User Management Tab -->
+      <section id="usersTab" class="tab" style="display:none;">
+        <h2>User Management</h2>
+        <form id="addUserForm">
+          <input type="text" id="newUsername" placeholder="Username" required>
+          <input type="password" id="newPassword" placeholder="Password" required>
+          <select id="newRole">
+            <option value="admin">Admin</option>
+            <option value="guard">Guard</option>
+          </select>
+          <button type="submit">Add User</button>
+        </form>
+        <table id="usersTable"></table>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="settingsTab" class="tab" style="display:none;">
+        <h2>Settings</h2>
+        <form id="settingsForm">
+          <label>
+            Theme:
+            <select id="themeSelect">
+              <option value="default">Default</option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+          <br><br>
+          <label>
+            Change Password: <input type="password" id="changePass" placeholder="New Password">
+          </label>
+          <button type="button" onclick="saveSettings()">Save Settings</button>
+        </form>
+        <div id="settingsMsg"></div>
+      </section>
+
+      <!-- Audit Trail Tab (NEW) -->
+      <section id="auditTab" class="tab" style="display:none;">
+        <h2>Audit Trail</h2>
+        <table id="auditTable"></table>
+        <button onclick="clearAuditTrail()" style="background:#d53a3a; margin-top:10px;">Clear Audit Trail</button>
+      </section>
+    </main>
+  </div>
+
+  <!-- Edit Visitor Modal -->
+  <div id="editModal" style="display:none;">
+    <form onsubmit="saveEditVisitor(event)">
+      <h3>Edit Visitor</h3>
+      <input id="editName" placeholder="Name" required>
+      <input id="editContact" placeholder="Contact Number" required>
+      <input id="editID" placeholder="Valid ID" required>
+      <input id="editUnit" placeholder="Unit" required>
+      <input id="editPurpose" placeholder="Purpose" required>
+      <button type="submit">Save</button>
+      <button type="button" onclick="closeEditVisitor()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- QR Code Display Modal -->
+  <div id="qrModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.18); align-items:center; justify-content:center; z-index:1100;">
+    <div style="background:#fff; padding:32px 26px; border-radius:12px; box-shadow:0 2px 20px #1235;">
+      <h3>Visitor QR Code</h3>
+      <div id="qrCodeContainer" style="margin-bottom:16px;"></div>
+      <button onclick="closeQRModal()">Close</button>
+    </div>
+  </div>
+  <!-- QR Scanner Modal -->
+  <div id="qrScannerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.12); align-items:center; justify-content:center; z-index:1200;">
+    <div style="background:#fff; padding:28px 22px; border-radius:14px; box-shadow:0 2px 20px #1235;">
+      <h3>Scan Visitor QR Code</h3>
+      <div id="qr-reader" style="width:320px; margin:0 auto 12px auto;"></div>
+      <button onclick="closeQRScanner()">Close</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
